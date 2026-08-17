@@ -1,6 +1,6 @@
 name: Supabase Deploy
 
-# Pushes migrations + the chat Edge Function to the hosted Supabase project.
+# Pushes migrations + Edge Functions to the hosted Supabase project.
 # Requires these repo secrets to be configured first (Settings > Secrets and
 # variables > Actions):
 #   SUPABASE_ACCESS_TOKEN  -- personal access token, supabase.com/dashboard/account/tokens
@@ -8,6 +8,15 @@ name: Supabase Deploy
 #   SUPABASE_DB_PASSWORD   -- the project's database password (set at project creation)
 #   ZHIPU_API_KEY          -- kept as an Edge Function secret, never in the repo
 #   XFYUN_APP_ID / XFYUN_API_KEY / XFYUN_API_SECRET -- console.xfyun.cn app credentials
+#
+# All of the above are only ever referenced via `env:` and read back as shell
+# variables ($VAR) inside `run:` -- never interpolated directly as
+# ${{ secrets.X }} into a run: command string. That distinction matters:
+# inline interpolation bakes the literal secret text into the generated
+# shell script itself, which is exactly what GitHub's own secret-handling
+# guide warns against. Going through env: keeps the raw value out of the
+# script text entirely; it only ever exists as a process environment
+# variable for that one step.
 on:
   push:
     branches: [main]
@@ -17,6 +26,14 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
+      XFYUN_APP_ID: ${{ secrets.XFYUN_APP_ID }}
+      XFYUN_API_KEY: ${{ secrets.XFYUN_API_KEY }}
+      XFYUN_API_SECRET: ${{ secrets.XFYUN_API_SECRET }}
     steps:
       - uses: actions/checkout@v4
 
@@ -26,32 +43,24 @@ jobs:
 
       - name: Link project
         working-directory: backend
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} --password "${{ secrets.SUPABASE_DB_PASSWORD }}"
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
 
       - name: Push database migrations
         working-directory: backend
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase db push --password "${{ secrets.SUPABASE_DB_PASSWORD }}"
+        run: supabase db push --password "$SUPABASE_DB_PASSWORD"
 
       - name: Set Edge Function secrets
         working-directory: backend
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           supabase secrets set \
-            ZHIPU_API_KEY="${{ secrets.ZHIPU_API_KEY }}" \
+            ZHIPU_API_KEY="$ZHIPU_API_KEY" \
             CHAT_MODEL_ID="glm-4-flash" \
-            XFYUN_APP_ID="${{ secrets.XFYUN_APP_ID }}" \
-            XFYUN_API_KEY="${{ secrets.XFYUN_API_KEY }}" \
-            XFYUN_API_SECRET="${{ secrets.XFYUN_API_SECRET }}"
+            XFYUN_APP_ID="$XFYUN_APP_ID" \
+            XFYUN_API_KEY="$XFYUN_API_KEY" \
+            XFYUN_API_SECRET="$XFYUN_API_SECRET"
 
       - name: Deploy Edge Functions
         working-directory: backend
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           supabase functions deploy chat --use-api
           supabase functions deploy xfyun-auth --use-api
