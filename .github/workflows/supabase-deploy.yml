@@ -1,0 +1,57 @@
+name: Supabase Deploy
+
+# Pushes migrations + the chat Edge Function to the hosted Supabase project.
+# Requires these repo secrets to be configured first (Settings > Secrets and
+# variables > Actions):
+#   SUPABASE_ACCESS_TOKEN  -- personal access token, supabase.com/dashboard/account/tokens
+#   SUPABASE_PROJECT_REF   -- the project ref id (in the project's dashboard URL)
+#   SUPABASE_DB_PASSWORD   -- the project's database password (set at project creation)
+#   ZHIPU_API_KEY          -- kept as an Edge Function secret, never in the repo
+#   XFYUN_APP_ID / XFYUN_API_KEY / XFYUN_API_SECRET -- console.xfyun.cn app credentials
+on:
+  push:
+    branches: [main]
+    paths: ["backend/**"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link project
+        working-directory: backend
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} --password "${{ secrets.SUPABASE_DB_PASSWORD }}"
+
+      - name: Push database migrations
+        working-directory: backend
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase db push --password "${{ secrets.SUPABASE_DB_PASSWORD }}"
+
+      - name: Set Edge Function secrets
+        working-directory: backend
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase secrets set \
+            ZHIPU_API_KEY="${{ secrets.ZHIPU_API_KEY }}" \
+            CHAT_MODEL_ID="glm-4-flash" \
+            XFYUN_APP_ID="${{ secrets.XFYUN_APP_ID }}" \
+            XFYUN_API_KEY="${{ secrets.XFYUN_API_KEY }}" \
+            XFYUN_API_SECRET="${{ secrets.XFYUN_API_SECRET }}"
+
+      - name: Deploy Edge Functions
+        working-directory: backend
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase functions deploy chat --use-api
+          supabase functions deploy xfyun-auth --use-api

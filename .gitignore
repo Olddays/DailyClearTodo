@@ -1,0 +1,43 @@
+# Flutter / Dart
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.packages
+app/build/
+app/**/generated_plugin_registrant.dart
+app/*.iml
+app/.idea/
+
+# Per-platform build/ephemeral dirs (each platform folder has its own, not
+# just the top-level app/build/ -- learned the hard way when a Gradle
+# problems-report.html from a local test build almost got committed)
+app/android/.gradle/
+app/android/build/
+app/android/local.properties
+app/android/app/upload-keystore.jks
+app/android/key.properties
+app/ios/Pods/
+app/ios/.symlinks/
+app/ios/Flutter/ephemeral/
+app/ios/Flutter/Flutter.podspec
+app/macos/Flutter/ephemeral/
+app/macos/Pods/
+app/windows/flutter/ephemeral/
+app/linux/flutter/ephemeral/
+
+# Node (Supabase CLI is installed as an npm dependency in backend/)
+backend/node_modules/
+
+# Supabase
+backend/supabase/.branches/
+backend/supabase/.temp/
+.env
+.env.local
+**/.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local dev config (has project URL/keys baked in for the preview tool)
+.claude/launch.json

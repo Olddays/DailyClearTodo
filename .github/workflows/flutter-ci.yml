@@ -1,0 +1,28 @@
+name: Flutter CI
+
+# Fast feedback path: analyze + unit tests only, on every push/PR. Keep this
+# cheap and quick -- full platform builds live in flutter-build-matrix.yml.
+on:
+  push:
+    branches: [main]
+    paths: ["app/**"]
+  pull_request:
+    paths: ["app/**"]
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.4"
+          channel: stable
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
