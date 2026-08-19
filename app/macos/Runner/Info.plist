@@ -32,5 +32,16 @@
 	<string>日清需要访问麦克风来实现语音输入</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>日清需要使用语音识别把你说的话转成文字</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.dailyclear.dailyclear.auth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>dailyclear</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

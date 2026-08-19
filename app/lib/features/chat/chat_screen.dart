@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/chat_message.dart' as domain;
@@ -84,6 +85,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       appBar: AppBar(
         title: const Text('日清'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.lock_outline),
+            tooltip: '修改密码',
+            onPressed: () => context.push('/change-password'),
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: '退出登录',

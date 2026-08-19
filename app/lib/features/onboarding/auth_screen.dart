@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -146,6 +147,11 @@ class _AuthScreenState extends State<AuthScreen> {
                             }),
                     child: Text(_isSignUp ? '已有账号？去登录' : '没有账号？去注册'),
                   ),
+                  if (!_isSignUp)
+                    TextButton(
+                      onPressed: _isSubmitting ? null : () => context.push('/forgot-password'),
+                      child: const Text('忘记密码？'),
+                    ),
                 ],
               ),
             ),
