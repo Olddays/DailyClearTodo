@@ -35,7 +35,7 @@ jobs:
       XFYUN_API_KEY: ${{ secrets.XFYUN_API_KEY }}
       XFYUN_API_SECRET: ${{ secrets.XFYUN_API_SECRET }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: supabase/setup-cli@v1
         with:
