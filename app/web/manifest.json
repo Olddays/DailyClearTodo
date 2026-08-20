@@ -1,11 +1,11 @@
 {
-    "name": "dailyclear",
-    "short_name": "dailyclear",
+    "name": "日清 DailyClear",
+    "short_name": "日清",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#D84315",
+    "theme_color": "#D84315",
+    "description": "番茄工作法助手 -- 每天的账，当天清。",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

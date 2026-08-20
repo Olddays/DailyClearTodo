@@ -7,7 +7,7 @@
     <!-- flutter_local_notifications on Android 13+ (API 33) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
-        android:label="dailyclear"
+        android:label="日清"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

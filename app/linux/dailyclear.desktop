@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=日清
+Comment=番茄工作法助手
+Exec=dailyclear
+Icon=dailyclear
+Terminal=false
+Categories=Utility;Office;
+StartupWMClass=com.dailyclear.dailyclear

@@ -27,7 +27,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   FlutterWindow window(project);
   Win32Window::Point origin(10, 10);
   Win32Window::Size size(1280, 720);
-  if (!window.Create(L"dailyclear", origin, size)) {
+  // "日清" as a \u escape rather than a literal UTF-8 string -- MSVC's
+  // handling of non-ASCII characters in L"" literals depends on the source
+  // file encoding/active code page, which isn't reliably testable from this
+  // Linux-only dev environment. The escape form is decoded by the compiler
+  // regardless of file encoding, so it can't silently mojibake on CI.
+  if (!window.Create(L"\u65e5\u6e05", origin, size)) {
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);
